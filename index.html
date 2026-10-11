@@ -153,6 +153,16 @@ h1,nav button{text-transform:none}
   <div id="tlEdit"></div>
 </section>
 
+<section id="s-rules">
+  <h2>rules</h2>
+  <div class="item"><span class="k">1</span><span class="t">Every card must be read aloud so everyone knows what task you have been given.</span></div>
+  <div class="item"><span class="k">2</span><span class="t">Any card that refers to the Taskmaster is referring to Anna.</span></div>
+  <div class="item"><span class="k">3</span><span class="t">If you get a card that has an effect that lasts the whole game and you fail the condition of the card, you drink and you no longer have to follow the rules of that card.</span></div>
+  <div class="item"><span class="k">4</span><span class="t">If you get more than one card which has an effect that lasts for the whole game, the new card will override the first card and you only have to do what the new card says.</span></div>
+  <div class="item"><span class="k">5</span><span class="t">Least amount of drinks wins! The Taskmaster will give the winner a prize so it is worth trying to not lose, even if you aren’t drinking alcohol!</span></div>
+  <div class="item"><span class="k">6</span><span class="t">The person with the most drinks will suffer a punishment determined by the group. After all, drunkenness and gluttony is a sin!</span></div>
+</section>
+
 <section id="s-dice">
   <h2>Drunk dice</h2>
 
@@ -219,22 +229,74 @@ function load(key, fallback){
 function save(key, val){ try{ localStorage.setItem('faith22p_'+key, JSON.stringify(val)); }catch(e){} }
 function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]}); }
 
-var dares = load('dares', [
-  'Everyone give us a "hear-me-out" character. If none of us can agree with your attraction for this character, you drink. (group date)',
-  'Everyone go around and say your name as slowly as you can in one breath. The person who lasts the longest is safe. (group dare)',
+var dares = load('dares2', [
+  "Buzz like a bee. Now start slowly moving towards the person on your left or right whilst buzzing until you reach their ear. If they flinch/move, they drink. If you failed to freak them out, you drink.",
+  "I hope you know your female anatomy! Name 3 parts of the vagina, inside or outside, in just 10 seconds. If you fail, you must drink. Your time starts now.",
+  "Do NOT check your phone or watch. What is the time? If you are within five minutes, you are safe. If not, you drink. If you checked, you double-drink.",
+  "Choose a person to your left or right and guess their favourite alcoholic beverage. If you guess incorrectly, you drink.",
+  "Grab an ice cube. Put it down your shirt and let it melt completely. If you refuse/fail to do the task, you drink.",
+  "Look at the person directly opposite you. If there is no-one there, choose a person to your left or your right. You must now have a staring contest with them and whoever breaks contact first must drink.",
+  "Time to get into the Christmas spirit! Sing us all a Christmas song or you drink. If we don’t feel your joy for Christmas, you also drink.",
+  "Ever wanted to speak another language? Well now you can! After reading this card, you must now start speaking in another language until the end of the game (time for most of you to go on Google Translate!). The moment you start speaking English again, you must drink. (Once you speak English, you don’t have to speak in another language anymore.)",
+  "Ever wanted to live like a monk? Well now you can! After reading this card, you must stay silent until the end of the game. The moment you break your vow of silence, you drink. (Once the silence is broken, you don’t need to stay silent anymore.)",
+  "You are in jail and you have one phone call to have someone come bail you out. Let’s hope you know someone reliable! Phone someone who is not in the circle. If they do not pick up, you drink. If you refuse to call anyone, you double-drink.",
+  "It’s time for some princess training! Pick something to balance on your head for one minute. If it falls, you drink. If it falls within 5 seconds, you double-drink.",
+  "Let’s go down memory lane… Show everyone in the circle the oldest photo on your camera roll or you drink.",
+  "I spy with my little eye… silently pick an object in the room. Now pick someone in the circle to compete against in a match of I Spy. Your opponent gets 10 guesses. If they figure it out, you drink. If they fail, they drink instead.",
+  "Could you ever be a good chef? Here is your test! What are the four core ingredients of bread? If you can’t name them all, you drink. If you can’t name any ingredients, you double-drink.",
+  "Could you ever be a good stand-up comedian? Here is your test! Tell us all a joke. If you don’t get a single laugh, you drink.",
+  "Could you ever be a talented actor/actress? Here is your test! Try and cry on command. If you fail, you drink.",
+  "Think of any number between 1-100. Got one? Good. You must now clap this many times exactly or else you must drink.",
+  "Think of a country that starts with the first letter of your name. Got one? Good. Now name the capital of this country. If you can’t, you must drink. If it’s impossible, you double-drink.",
   "I hope you are a Twilight fan! If you are team Edward, give the person to your right a little nibble. If you are team Jacob, give us your best wolf howl. If you refuse, you drink.",
-  "Men suck. If you have a man, drink. You need a drink after putting up with him. If you don't have a man, congrats on your freedom! (group dare)",
-  'Give everyone in the circle a compliment or you must drink.',
-  'Show us a hidden talent or party trick, or drink.',
-  'Put us in a party mood! Give us a little boogie for 20 seconds or you must drink.',
-  "I hope you are good at impressions! Choose the person to your left or right and impersonate them for one minute. If it's a bad impression, you drink. If you refuse, you drink."
+  "Compliment challenge! Give everyone in the circle a compliment from the heart or you must drink. If you are rude enough that you can’t even give out one compliment, you double-drink.",
+  "We want to get to know you better! Show us a hidden talent/party trick or you must drink.",
+  "Put us in a party mood! Give us a little boogie for 20 seconds or you must drink.",
+  "I hope you are good at impressions! Choose the person to your left or right and then impersonate them for one minute. If it’s a bad impression, you drink. If you refuse, you double-drink.",
+  "Let’s spread the love! Choose the person to your left or right and give them a little friendly smooch somewhere on their person (with consent of course!). If you refuse, you drink. If you don’t get their consent and kiss them anyway, you drink. If the smooch receiver refuses, you are safe.",
+  "Make a funny face to entertain the circle. Got one? Good. Now you must hold this face for 1 minute. If you can’t hold it, you drink. If you hold it for less than 5 seconds, you double drink. Your time starts now.",
+  "The person on your left now has 30 seconds to tickle you. If you tap out or say stop, you drink. If you tap out or say stop in less than 5 seconds, you double-drink.",
+  "Ever wanted to switch up your accent for a cooler one? Well now you can! After reading this card, you must now speak in an accent of your choice until the end of the game. If you return to your regular accent, you must drink. (Once your regular accent is back, you don’t need to continue.)",
+  "Time for some monkey business! The person on your right will pick an animal for you to impersonate for 30 seconds. If the group agrees that you failed to impersonate this animal well, you drink.",
+  "Tonight’s a magical night but something is missing… some actual magic! Attempt to do a magic trick. If the group fails to feel the magic, you drink.",
+  "Spin a pen. Whoever it lands on gets to draw you a temporary tattoo with the pen. If you refuse the tattoo, you drink.",
+  "Use your salesmanship skills to sell us something random on the table. Here’s the twist: someone else has to drink in order to “buy” the item. If you fail to convince any of us to buy the item, you have to drink to recuperate your lost sales.",
+  "Choose someone to your left or right. Congratulations! They are a trainee hairstylist and luckily for you, they have been generous enough to offer you a free hair styling session! Let them play with your hair for 1 minute. If you refuse, you drink.",
+  "You are a cunning temptress looking for her next victim. Choose anyone around the table who looks easy enough to seduce. You have 1 minute to have them fall in love with you. If their heart flutters, you are safe. If you fail to rizz them up successfully, you drink. If you refuse completely, you double-drink.",
+  "Ever wanted to know what life is like for a blind person? Well now you can! After reading this card, you must keep your eyes shut for the rest of the game. If you open your eyes, you drink. (Once your eyes are open, you don’t need to shut them again.)",
+  "Time to swear like a sailor! Continuously swear for 10 seconds straight. If you stop halfway through, you drink. If you flat-out refuse, you double-drink. Your time starts now.",
+  "I heard you have been struggling to come up with a present for your friend’s birthday? No need to worry - this dare is the perfect gift for them! Sing happy birthday to whoever’s birthday is the closest in your sexiest voice. If they liked it, you are safe. If they did not, you drink. If you don’t sing, you double-drink.",
+  "This week has been exhausting but luckily you can help to give someone some much needed relief! Choose someone to your left or right and give them a nice 1 minute massage! If they don’t feel more relaxed after your massage, you drink. If you refuse, you double-drink.",
+  "Shutterbug challenge: Take the perfect group selfie! You must fit everyone in and everyone must be happy with their appearance. You only get one take. If you fail either of these conditions, you drink.",
+  "The people pleaser’s favourite dare. You must say yes to everything for 1 minute. The Taskmaster will protect you from doing anything too outrageous but if you don’t do any of the reasonable requests, you must drink. Your time starts now.",
+  "Charity time! Order something for another table or you must drink.",
+  "Give us a smile love! You must smile as wide as you can and hold it for 2 minutes straight. If you fail to hold it, you drink.",
+  "Choose anyone around the circle. Congratulations! You are on a date with Jennifer Coolidge and you remember she has a thing for Minecraft villagers! Do your best Minecraft villager impression for her. If she likes it, you are safe but if she doesn’t, you must drink.",
+  "Does he love you or love you not? The Taskmaster has a flower for you to pluck! If the petal lands on love me, you are safe. If it lands on love me not, you must drink.",
+  "Sometimes life can simply be decided by dumb luck. Choose someone to flip a coin with. Decide between yourselves if you want heads or tails and then flip. The winner is safe and the loser must drink.",
+  "Channel your inner Elphaba! You can either try to out-do Cynthia Erivo’s Defying Gravity riff or hex us all with some “eleka nahmens”. If you don’t do either of these, you drink. If you don’t know what these are, you double-drink.",
+  "Did you know there are over 1000 different Pokemon? Name 5 Pokemon or you must drink.",
+  "Think of a controversial topic you are passionate about and that you believe you could win a debate in. Got one? Good. Now pick someone around the circle who must take the opposite side of that debate. You will both have 30 seconds to give your arguments and then everyone will vote for their winner. The person with the least amount of votes must drink. If you can’t think of a topic, you double-drink for being apolitical.",
+  "1,2,3,4… I declare a thumb war! Pick the person to your left or right who you think you could crush in a thumb war. Best of three wins. The loser must drink. If you refuse to thumb wrestle, you double drink.",
+  "Sul sul! You have been teleported to the land of the Sims and you have to assimilate into their society. Do your best impression of a Sim or you must drink.",
+  "I think we have a silly goose in the room! Give us your best goose honk or you must drink.",
+  "You smell a little bit stinky… Roleplay scrubbing yourself in the shower for 20 seconds to clean yourself up. If you refuse to scrub, you drink.",
+  "Where’s the lamb sauce you donkey? Get out! (Not really!) Do your best Gordon Ramsay impression or you must drink.",
+  "Pretend that you are on a reality show and you have been given one final plea before you get voted off. Beg for your life! If more than half of the circle are convinced to save you, you are safe. If you don’t get enough votes, you drink.",
+  "Pick a random object on the table. Congratulations you are now dating! You must convince the entire group that you and this object were a match made in heaven and that you can truly date everything. If someone disapproves of your relationship, you must drink.",
+  "Choose someone around the circle to be an old royal king. Congratulations it has been announced that you two are to be married! What’s that? You want to marry someone your own age? Oh dear… try and convince your king to call off the wedding without getting yourself executed! If your chosen king executes you, you drink. If the marriage is called off, you are safe. If you choose to stay in your arranged marriage, you double-drink your sorrows away.",
+  "You are our medieval court jester for this evening and you must entertain us all for 1 minute. Everyone will rate your performance with a thumbs up or thumbs down. If more than half of us give you a thumbs up, you are safe. If you get too many thumbs down, you drink.",
+  "My anaconda don’t want none unless you got buns hun! Pick someone in the circle who you want to compete with in a twerking competition. The best twerker is safe and the loser must drink.",
+  "You have been possessed by Michael Jackson’s spirit. Do your best “hee-hee” or you must drink.",
+  "Pick anyone around the table. The person you picked was the owner of a one-wish-willow and their wish was that you would love them more than anyone else in the world. And now you do! Pretend to be absolutely obsessed with this person until the game is over or you must drink.",
+  "Ever wanted to know what it was like to have amnesia? Well now you do! After reading this card, you must pretend that you have lost all your memories regarding your friends/family. If you say anything that you shouldn’t know, you must drink. (Once one memory is back, all your memories return and you don’t need to continue.)"
 ]);
 var crew = load('crew', ['Faith','Anna','Xylona','Jemma','Neo','Lilia','Lucy','Eva'].map(function(n){return {n:n,p:''}}));
 var games = load('games', [{n:'Your game here', r:'Add the name and rules of the games you made up.'}]);
 var jokes = load('jokes', ['Add your inside jokes here.']);
 
 /* tabs */
-var TABS = [['who','WHOS NEXT'],['dares','DARES😛'],['group','GROUP DARES'],['dice','DICE'],['tipsy','TIPSY LAND']];
+var TABS = [['who','WHOS NEXT'],['dares','DARES😛'],['group','GROUP DARES'],['dice','DICE'],['tipsy','TIPSY LAND'],['rules','RULES']];
 var nav = $('tabs');
 TABS.forEach(function(t,i){
   var b = document.createElement('button');
@@ -265,8 +327,8 @@ function makeWheel(canvasId, spinBtnId, getItems, onResult){
       var a0 = -Math.PI/2 + i*seg, a1 = a0+seg;
       c.beginPath(); c.moveTo(r,r); c.arc(r,r,r,a0,a1); c.closePath();
       c.fillStyle = SEG[i % SEG.length]; c.fill();
-      c.strokeStyle = '#fff1f7'; c.lineWidth = 2; c.stroke();
-      if(items.length){
+      c.strokeStyle = '#fff1f7'; c.lineWidth = n>25 ? 0.6 : 2; c.stroke();
+      if(items.length && n<=40){
         c.save(); c.translate(r,r); c.rotate(a0+seg/2);
         c.textAlign = 'right'; c.textBaseline = 'middle'; c.fillStyle = TXT;
         c.font = '800 ' + (n>10 ? 15 : 18) + 'px "Plus Jakarta Sans", Arial, sans-serif';
@@ -317,13 +379,13 @@ function renderDares(){
   dares.forEach(function(d,i){
     var row = document.createElement('div'); row.className = 'item';
     row.innerHTML = '<span class="k">'+(i+1)+'</span><span class="t">'+esc(d)+'</span>';
-    row.appendChild(mkX('Remove dare', function(){ dares.splice(i,1); save('dares',dares); renderDares(); dareWheel.draw(); }));
+    row.appendChild(mkX('Remove dare', function(){ dares.splice(i,1); save('dares2',dares); renderDares(); dareWheel.draw(); }));
     el.appendChild(row);
   });
 }
 $('dareAdd').onclick = function(){
   var t = $('dareNew').value.trim(); if(!t) return;
-  dares.push(t); $('dareNew').value=''; save('dares',dares); renderDares(); dareWheel.draw();
+  dares.push(t); $('dareNew').value=''; save('dares2',dares); renderDares(); dareWheel.draw();
 };
 function renderGames(){
   var el = $('gameList'); el.innerHTML = '';
@@ -534,7 +596,19 @@ function tlRenderEdit(){
 tlBuild(); tlReset(); tlRenderEdit();
 
 /* group dares */
-var groupDares = load('gdares', []);
+var groupDares = load('gdares2', [
+  "ASMR challenge! Everyone try to do your best ASMR impression and give us some tingles! Afterwards, everyone must vote for your favourite. If you get at least one vote, you are safe. If you get no votes, you drink. If you didn’t do any ASMR, you double-drink.",
+  "Hot potato challenge! Everyone must quickly pass around an object clockwise for 20 seconds. Whoever it last lands on is the loser and they must drink.",
+  "Photo challenge! Everyone must take one aesthetic photo of anything in the room - no retakes - and the worst photographer must drink. Anyone who retakes must double-drink.",
+  "Everyone go around the circle and give us a “hear-me-out” character. If none of us can agree with your attraction for this character, you drink.",
+  "Everyone go around and say your name as slowly as you can in one breath. The person who lasts the longest is safe. Everyone else must drink.",
+  "Men suck. If you have a man, drink. You need a drink after putting up with him. If you don’t have a man, congrats on your freedom!",
+  "Let’s play Chinese whispers! Whisper a sentence to the person on your left and go clockwise until the sentence comes back to you. If the sentence is not the same as it was at the beginning, everyone must drink.",
+  "Are you chronically online? Everyone in the group must show their screen time report. If you have over 8 hours of screen time on average, you must drink. If you have over 10 hours, you must double-drink. If you have over 12 hours, you must triple-drink.",
+  "The floor is lava! If you touch the floor from this point onwards, you must drink.",
+  "Can you keep up with the rhythm? The Taskmaster will clap a pattern that you have to repeat back to her. If you successfully repeat the pattern back 5 times, you are safe. Fail to clap it back correctly and you drink. If you fail the first clap back, you double-drink.",
+  "Hello travellers! Welcome to your Drunkards & Dragons campaign. The Taskmaster will pass around a D20 dice for you all to roll. If you get a 10 or above, you are safe. If you get below a 10, you drink. If you get a 1, you double-drink. If you get a 20, you can force someone else to drink."
+]);
 var groupWheel = makeWheel('groupCanvas','groupSpin',
   function(){ return groupDares.map(function(d,i){return {label:String(i+1), i:i, t:d}}); },
   function(item){
@@ -545,91 +619,17 @@ function renderGroup(){
   groupDares.forEach(function(d,i){
     var row = document.createElement('div'); row.className = 'item';
     row.innerHTML = '<span class="k">'+(i+1)+'</span><span class="t">'+esc(d)+'</span>';
-    row.appendChild(mkX('Remove dare', function(){ groupDares.splice(i,1); save('gdares',groupDares); renderGroup(); groupWheel.draw(); }));
+    row.appendChild(mkX('Remove dare', function(){ groupDares.splice(i,1); save('gdares2',groupDares); renderGroup(); groupWheel.draw(); }));
     el.appendChild(row);
   });
 }
 $('groupAdd').onclick = function(){
   var t = $('groupNew').value.trim(); if(!t) return;
-  groupDares.push(t); $('groupNew').value=''; save('gdares',groupDares); renderGroup(); groupWheel.draw();
+  groupDares.push(t); $('groupNew').value=''; save('gdares2',groupDares); renderGroup(); groupWheel.draw();
 };
 renderGroup();
 
 /* drunk dice */
 var DICE = [
   ['1 shot (or a big sip)',null,'Bottoms up: finish your drink','Faith gives out 2 drinks','Truth or drink','Citrus drinkers sip'],
-  ['Roll again','Spin a bottle: whoever it points at drinks','Flip a coin: heads give out 2, tails drink 2','Top up your drink','Stare contest with the person next to you. Loser drinks','Roll again'],
-  ['Sing or drink','Cheers: everyone clinks and sips','Twerk or drink',null,'Kiss, marry, kill: someone names three people and you choose',null],
-  [null,'Most sober person drinks','1 shot (or a big sip)','Whoever has the aux drinks','Drink up: a big gulp','Brown hair drinks'],
-  ['Give out a shot (or 3 sips)',null,'Wine drinkers drink','Blondes drink','Fizzy drink drinkers sip',null],
-  ['Chug water','Pick a drink buddy. They sip when you sip until the next roll','Roll again','Shots, shots, shots: everyone takes a big sip','Truth or drink',null]
-];
-var savedDice = load('dice', null);
-if(savedDice && savedDice.length === 6){ DICE = savedDice; }
-function renderDdList(){
-  var el = $('ddList'); el.innerHTML = '';
-  for(var a=0;a<6;a++){
-    for(var b=0;b<6;b++){
-      (function(a,b){
-        var row = document.createElement('div'); row.className = 'item';
-        var k = document.createElement('span'); k.className = 'ddk'; k.textContent = (a+1)+' and '+(b+1);
-        var inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = 'safe'; inp.value = DICE[a][b] || '';
-        inp.oninput = function(){ DICE[a][b] = inp.value.trim() || null; save('dice', DICE); };
-        row.appendChild(k); row.appendChild(inp); el.appendChild(row);
-      })(a,b);
-    }
-  }
-}
-renderDdList();
-var ddTimer = null;
-$('ddRoll').onclick = function(){
-  clearInterval(ddTimer);
-  var n = 0;
-  ddTimer = setInterval(function(){
-    $('dd1').textContent = 1+Math.floor(Math.random()*6);
-    $('dd2').textContent = 1+Math.floor(Math.random()*6);
-    n++;
-    if(n>8){
-      clearInterval(ddTimer);
-      var a = 1+Math.floor(Math.random()*6), b = 1+Math.floor(Math.random()*6);
-      $('dd1').textContent = a; $('dd2').textContent = b;
-      var act = DICE[a-1][b-1] || 'safe. u live to see another round';
-      $('ddResult').innerHTML = '<div class="n">'+a+' and '+b+'</div><div class="d">'+esc(act)+'</div>';
-      try{navigator.vibrate&&navigator.vibrate(100)}catch(e){}
-    }
-  },70);
-};
-
-/* dice / coin */
-$('rollBtn').onclick = function(){
-  var n = 1+Math.floor(Math.random()*6);
-  $('diceOut').textContent = n;
-  $('diceNote').textContent = (n%2===0 ? $('evenRule').value : $('oddRule').value);
-};
-$('coinBtn').onclick = function(){
-  $('diceOut').textContent = Math.random()<0.5 ? 'Heads' : 'Tails';
-  $('diceNote').textContent = '';
-};
-
-/* timer */
-var tmr = null;
-function startTimer(s){
-  clearInterval(tmr);
-  function show(){ $('timerOut').textContent = Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
-  show();
-  tmr = setInterval(function(){
-    s--; show();
-    if(s<=0){ clearInterval(tmr); $('timerOut').textContent = "Time's up"; try{navigator.vibrate&&navigator.vibrate([300,100,300])}catch(e){} }
-  },1000);
-}
-$('t20').onclick = function(){ startTimer(20); };
-$('t60').onclick = function(){ startTimer(60); };
-
-renderDares(); renderGames(); renderJokes(); renderCrew();
-whoWheel.draw(); dareWheel.draw(); groupWheel.draw();
-window.addEventListener('resize', function(){ dareWheel.draw(); whoWheel.draw(); });
-if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ dareWheel.draw(); whoWheel.draw(); }); }
-})();
-</script>
-</body>
-</html>
+  ['Roll again','
