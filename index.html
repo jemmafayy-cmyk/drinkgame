@@ -87,11 +87,8 @@ textarea{min-height:80px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .center{text-align:center}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
-.nhie{background:var(--cream);border-radius:14px;padding:28px 20px;text-align:center;min-height:210px;display:flex;flex-direction:column;justify-content:center;margin-top:18px}
 button,input,textarea{text-transform:lowercase}
 h1,nav button{text-transform:none}
-.nhie .lead{font-weight:800;color:var(--pink-d)}
-.nhie .txt{font-weight:700;font-size:1.5rem;line-height:1.3;margin-top:8px}
 .dicerow{display:flex;gap:16px;justify-content:center;margin:22px 0 4px}
 .die{width:88px;height:88px;background:var(--cream);border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:3rem;box-shadow:0 4px 0 var(--yellow)}
 @media (prefers-reduced-motion:reduce){.wheelwrap canvas{transition-duration:.01s}}
@@ -154,21 +151,6 @@ h1,nav button{text-transform:none}
   <div class="mt center"><button class="btn alt" id="tlReset">restart</button></div>
   <h2>edit squares</h2>
   <div id="tlEdit"></div>
-</section>
-
-<section id="s-never">
-  <h2>Never have I ever</h2>
-
-  <div class="nhie"><div class="lead">Never have I ever…</div><div class="txt" id="nhieText">tap next one to start</div></div>
-  <p class="center hint" id="nhieCount"></p>
-  <div class="two">
-    <button class="btn" id="nhieNext">next one</button>
-    <button class="btn alt" id="nhieShuffle">shuffle again</button>
-  </div>
-  <div class="mt center"><button class="btn alt" id="nhieDel">bin this card</button></div>
-  <h2>add</h2>
-  <textarea id="nhieNew" placeholder="type ur own"></textarea>
-  <div class="mt"><button class="btn" id="nhieAdd">add</button></div>
 </section>
 
 <section id="s-dice">
@@ -252,7 +234,7 @@ var games = load('games', [{n:'Your game here', r:'Add the name and rules of the
 var jokes = load('jokes', ['Add your inside jokes here.']);
 
 /* tabs */
-var TABS = [['who','WHOS NEXT'],['dares','DARES😛'],['group','GROUP DARES'],['never','NHIE'],['dice','DICE'],['tipsy','TIPSY LAND']];
+var TABS = [['who','WHOS NEXT'],['dares','DARES😛'],['group','GROUP DARES'],['dice','DICE'],['tipsy','TIPSY LAND']];
 var nav = $('tabs');
 TABS.forEach(function(t,i){
   var b = document.createElement('button');
@@ -409,35 +391,35 @@ var TL = [];
 (function(){
   function T(a,k,m,lab){ TL.push({a:a,k:k||'n',m:m||0,lab:lab||''}); }
   T('start line, safe','e',0,'go');
-  T('1 shot (or a big sip)');
-  T('never have i ever: say one, everyone who has sips');
-  T('green eyes drink');
-  T('give out 2 drinks');
+  T('');
+  T('');
+  T('');
+  T('');
   T('safe','s',0,'safe');
-  T('brunettes drink');
-  T('chug water');
+  T('');
+  T('');
   T('go forward 3','m',3,'+3');
-  T('cheers: everyone clinks and sips');
-  T('blondes drink');
-  T('truth or drink');
+  T('');
+  T('');
+  T('');
   T('call ur mum or ur ex, or drink');
   T('go back 4','m',-4,'-4');
-  T('drink buddy: pick someone, they sip when you sip until your next turn');
-  T('taken girls drink');
-  T('brown eyes drink');
+  T('');
+  T('');
+  T('');
   T('stare contest with someone, loser drinks');
   T('safe zone','s',0,'safe');
   T('group selfie on ur story or drink');
-  T('make a rule');
-  T('wine drinkers drink');
-  T('lowest phone battery drinks');
-  T('oldest drinks');
+  T('');
+  T('');
+  T('');
+  T('');
   T('go back 3','m',-3,'-3');
-  T('everyone drinks');
-  T('finish your drink');
+  T('');
+  T('');
   T('finish line','e',0,'end');
 })();
-var savedTL = load('tlsq', null);
+var savedTL = load('tlsq2', null);
 if(savedTL && savedTL.length === 28){
   savedTL.forEach(function(s,i){ TL[i].a = s.a; TL[i].k = s.k; TL[i].m = s.m; TL[i].lab = s.lab; });
 }
@@ -483,12 +465,12 @@ function tlReset(){
   tlTurnLabel(); tlTokens();
 }
 function tlLand(p, ps){
-  var name = ps[p].n, t = TL[tl.pos[p]], msg = name+': '+t.a;
+  var name = ps[p].n, t = TL[tl.pos[p]], msg = name+': '+(t.a||'safe');
   if(tl.pos[p] < 27 && t.m){
     tl.pos[p] = Math.max(0, Math.min(27, tl.pos[p]+t.m));
     tlTokens();
     var d = TL[tl.pos[p]];
-    if(tl.pos[p] < 27) msg += '. now on '+tl.pos[p]+': '+(d.m ? 'no double moves, safe' : d.a);
+    if(tl.pos[p] < 27) msg += '. now on '+tl.pos[p]+': '+(d.m ? 'no double moves, safe' : (d.a||'safe'));
   }
   if(tl.pos[p] >= 27){
     tl.over = true; tl.busy = false;
@@ -513,7 +495,7 @@ function tlRoll(){
 }
 $('tlRoll').onclick = tlRoll;
 $('tlReset').onclick = tlReset;
-function tlSave(){ save('tlsq', TL.map(function(t){ return {a:t.a,k:t.k,m:t.m,lab:t.lab}; })); }
+function tlSave(){ save('tlsq2', TL.map(function(t){ return {a:t.a,k:t.k,m:t.m,lab:t.lab}; })); }
 function tlStyle(i){
   var t = TL[i], d = $('tile'+i);
   d.className = 'tile t-'+t.k;
@@ -532,7 +514,7 @@ function tlRenderEdit(){
   TL.forEach(function(t,i){
     var row = document.createElement('div'); row.className = 'item';
     var k = document.createElement('span'); k.className = 'k'; k.textContent = i; row.appendChild(k);
-    var inp = document.createElement('input'); inp.type = 'text'; inp.value = t.a;
+    var inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = 'blank = safe'; inp.value = t.a;
     inp.oninput = function(){ TL[i].a = inp.value; tlSave(); };
     row.appendChild(inp);
     if(i > 0 && i < 27){
@@ -572,47 +554,6 @@ $('groupAdd').onclick = function(){
   groupDares.push(t); $('groupNew').value=''; save('gdares',groupDares); renderGroup(); groupWheel.draw();
 };
 renderGroup();
-
-/* never have I ever */
-var NHIE = [
-  'eaten food off the floor','texted the wrong person','cried at a film in public','been kicked out of a bar or club',
-  'faked a sick day','sent a message and instantly regretted it','pretended to know a song and sung the wrong words',
-  'fallen asleep in a club or pub','stalked an ex online','had a crush on a teacher','shouted at a stranger from a car',
-  'been on a date and left early','got lost in my own town','lied about my age','danced on a table','skipped a bill',
-  'blocked someone and unblocked them later','cried on a night out','forgotten someone\'s name straight after meeting them',
-  'locked myself out','walked home barefoot','got a tattoo I regret','dyed my hair a bad colour','been in a food fight',
-  'drunk-ordered food I forgot about','laughed so hard I cried at the wrong moment','had a fake ID','been to a festival',
-  'fallen over in public and pretended I meant to','kissed someone I met that night','kept a gift I hated and said I loved it',
-  'screamed on a rollercoaster','been caught talking to myself','sung karaoke','fancied a friend\'s ex','read someone else\'s messages',
-  'been dumped over text','told a lie to get out of plans','pretended to be on the phone to avoid someone',
-  'eaten an entire pizza alone','gone out with my top on inside out','slept through an alarm for something important',
-  'cried over a boy who did not deserve it','ghosted someone','gone through someone\'s camera roll','taken a photo of my food in front of everyone',
-  'been told I snore','broken something and hidden it','worn the same outfit twice in a week and hoped nobody noticed'
-];
-var nhieCustom = load('nhie', []);
-var nhieGone = load('nhieGone', []);
-var deck = [], pos = -1;
-function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-function newDeck(){ deck = shuffle(NHIE.concat(nhieCustom).filter(function(c){ return nhieGone.indexOf(c) === -1; })); pos = -1; }
-function nhieNext(){
-  if(!deck.length || pos>=deck.length-1) newDeck();
-  pos++;
-  $('nhieText').textContent = deck[pos];
-  $('nhieCount').textContent = (pos+1)+' of '+deck.length;
-}
-$('nhieNext').onclick = nhieNext;
-$('nhieDel').onclick = function(){
-  if(pos < 0 || !deck.length) return;
-  nhieGone.push(deck[pos]); save('nhieGone', nhieGone);
-  deck.splice(pos,1); pos--;
-  nhieNext();
-};
-$('nhieShuffle').onclick = function(){ newDeck(); nhieNext(); };
-$('nhieAdd').onclick = function(){
-  var t = $('nhieNew').value.trim(); if(!t) return;
-  nhieCustom.push(t); save('nhie', nhieCustom); $('nhieNew').value=''; deck.splice(pos+1,0,t);
-  $('nhieCount').textContent = "added, it'll come up this round";
-};
 
 /* drunk dice */
 var DICE = [
