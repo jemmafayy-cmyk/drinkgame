@@ -291,3 +291,419 @@ var dares = load('dares2', [
   "Pick anyone around the table. The person you picked was the owner of a one-wish-willow and their wish was that you would love them more than anyone else in the world. And now you do! Pretend to be absolutely obsessed with this person until the game is over or you must drink.",
   "Ever wanted to know what it was like to have amnesia? Well now you do! After reading this card, you must pretend that you have lost all your memories regarding your friends/family. If you say anything that you shouldn’t know, you must drink. (Once one memory is back, all your memories return and you don’t need to continue.)"
 ]);
+var crew = load('crew', ['Faith','Anna','Xylona','Jemma','Neo','Lilia','Lucy','Eva'].map(function(n){return {n:n,p:''}}));
+var games = load('games', [{n:'Your game here', r:'Add the name and rules of the games you made up.'}]);
+var jokes = load('jokes', ['Add your inside jokes here.']);
+
+/* tabs */
+var TABS = [['who','WHOS NEXT'],['dares','DARES😛'],['group','GROUP DARES'],['dice','DICE'],['tipsy','TIPSY LAND'],['rules','RULES']];
+var nav = $('tabs');
+TABS.forEach(function(t,i){
+  var b = document.createElement('button');
+  b.textContent = t[1]; b.setAttribute('role','tab'); b.setAttribute('aria-selected', String(i===0));
+  b.onclick = function(){
+    [].forEach.call(nav.children,function(x){x.setAttribute('aria-selected','false')});
+    b.setAttribute('aria-selected','true');
+    [].forEach.call(document.querySelectorAll('section'),function(s){s.classList.remove('on')});
+    $('s-'+t[0]).classList.add('on');
+    window.scrollTo(0,0);
+    if(t[0]==='dares') dareWheel.draw();
+    if(t[0]==='who') whoWheel.draw();
+    if(t[0]==='group') groupWheel.draw();
+  };
+  nav.appendChild(b);
+});
+
+/* wheel */
+function makeWheel(canvasId, spinBtnId, getItems, onResult){
+  var cv = $(canvasId), rot = 0, spinning = false;
+  function draw(){
+    var items = getItems(), n = Math.max(items.length,1);
+    var size = cv.parentElement.clientWidth || 300, dpr = window.devicePixelRatio || 1;
+    cv.width = size*dpr; cv.height = size*dpr;
+    var c = cv.getContext('2d'); c.scale(dpr,dpr);
+    var r = size/2, seg = 2*Math.PI/n;
+    for(var i=0;i<n;i++){
+      var a0 = -Math.PI/2 + i*seg, a1 = a0+seg;
+      c.beginPath(); c.moveTo(r,r); c.arc(r,r,r,a0,a1); c.closePath();
+      c.fillStyle = SEG[i % SEG.length]; c.fill();
+      c.strokeStyle = '#fff1f7'; c.lineWidth = n>25 ? 0.6 : 2; c.stroke();
+      if(items.length && n<=40){
+        c.save(); c.translate(r,r); c.rotate(a0+seg/2);
+        c.textAlign = 'right'; c.textBaseline = 'middle'; c.fillStyle = TXT;
+        c.font = '800 ' + (n>10 ? 15 : 18) + 'px "Plus Jakarta Sans", Arial, sans-serif';
+        c.fillText(String(items[i].label).toLowerCase(), r-18, 0);
+        c.restore();
+      }
+    }
+  }
+  function spin(){
+    var items = getItems();
+    if(spinning || !items.length) return;
+    spinning = true;
+    var n = items.length, seg = 360/n;
+    var target = Math.floor(Math.random()*n);
+    var landing = target*seg + seg*(0.15+Math.random()*0.7);
+    var current = ((rot%360)+360)%360;
+    var delta = ((360 - landing) - current + 360) % 360;
+    rot += 360*5 + delta;
+    cv.style.transform = 'rotate('+rot+'deg)';
+    var wait = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 50 : 4500;
+    setTimeout(function(){
+      spinning = false; onResult(items[target]);
+      try{navigator.vibrate&&navigator.vibrate(120)}catch(e){}
+    }, wait);
+  }
+  $(spinBtnId).onclick = spin;
+  return {draw:draw};
+}
+
+var dareWheel = makeWheel('dareCanvas','dareSpin',
+  function(){ return dares.map(function(d,i){return {label:String(i+1), i:i, t:d}}); },
+  function(item){
+    $('dareResult').innerHTML = '<div class="n">'+(item.i+1)+'</div><div class="d">'+esc(item.t)+'</div>';
+  });
+var whoWheel = makeWheel('whoCanvas','whoSpin',
+  function(){ return crew.filter(function(p){return p.n.trim()}).map(function(p){return {label:p.n, p:p}}); },
+  function(item){
+    var p = item.p;
+    $('whoResult').innerHTML = (p.p ? '<img src="'+p.p+'" alt="">' : '') + '<div class="who">'+esc(p.n)+'</div><div class="hint">ur next queen</div>';
+  });
+
+/* lists */
+function mkX(label, fn){
+  var x = document.createElement('button'); x.className='x'; x.textContent='\u00d7'; x.setAttribute('aria-label',label); x.onclick = fn; return x;
+}
+function renderDares(){
+  var el = $('dareList'); el.innerHTML = '';
+  dares.forEach(function(d,i){
+    var row = document.createElement('div'); row.className = 'item';
+    row.innerHTML = '<span class="k">'+(i+1)+'</span><span class="t">'+esc(d)+'</span>';
+    row.appendChild(mkX('Remove dare', function(){ dares.splice(i,1); save('dares2',dares); renderDares(); dareWheel.draw(); }));
+    el.appendChild(row);
+  });
+}
+$('dareAdd').onclick = function(){
+  var t = $('dareNew').value.trim(); if(!t) return;
+  dares.push(t); $('dareNew').value=''; save('dares2',dares); renderDares(); dareWheel.draw();
+};
+function renderGames(){
+  var el = $('gameList'); el.innerHTML = '';
+  games.forEach(function(g,i){
+    var row = document.createElement('div'); row.className='item';
+    row.innerHTML = '<span class="t"><strong>'+esc(g.n)+'</strong>\n'+esc(g.r)+'</span>';
+    row.appendChild(mkX('Remove game', function(){ games.splice(i,1); save('games',games); renderGames(); }));
+    el.appendChild(row);
+  });
+}
+$('gameAdd').onclick = function(){
+  var n = $('gameName').value.trim(), r = $('gameRules').value.trim(); if(!n) return;
+  games.push({n:n,r:r}); $('gameName').value=''; $('gameRules').value=''; save('games',games); renderGames();
+};
+function renderJokes(){
+  var el = $('jokeList'); el.innerHTML = '';
+  jokes.forEach(function(j,i){
+    var row = document.createElement('div'); row.className='item';
+    row.innerHTML = '<span class="t">'+esc(j)+'</span>';
+    row.appendChild(mkX('Remove joke', function(){ jokes.splice(i,1); save('jokes',jokes); renderJokes(); }));
+    el.appendChild(row);
+  });
+}
+$('jokeAdd').onclick = function(){
+  var t = $('jokeNew').value.trim(); if(!t) return;
+  jokes.push(t); $('jokeNew').value=''; save('jokes',jokes); renderJokes();
+};
+
+/* crew */
+var photoTarget = null;
+function renderCrew(){
+  var g = $('crewGrid'); g.innerHTML = '';
+  crew.forEach(function(p,i){
+    var d = document.createElement('div'); d.className='person';
+    var av = document.createElement('div'); av.className='av'; av.setAttribute('role','button'); av.setAttribute('aria-label','Add photo for '+p.n);
+    av.innerHTML = p.p ? '<img src="'+p.p+'" alt="">' : esc((p.n||'?').charAt(0).toUpperCase());
+    av.onclick = function(){ photoTarget = i; $('photoIn').click(); };
+    var inp = document.createElement('input'); inp.type='text'; inp.value=p.n; inp.setAttribute('aria-label','Name');
+    inp.oninput = function(){ crew[i].n = inp.value; save('crew',crew); };
+    inp.onchange = function(){ renderCrew(); whoWheel.draw(); };
+    d.appendChild(mkX('Remove '+p.n, function(){ crew.splice(i,1); save('crew',crew); renderCrew(); whoWheel.draw(); }));
+    d.appendChild(av); d.appendChild(inp); g.appendChild(d);
+  });
+}
+$('crewAdd').onclick = function(){ crew.push({n:'New',p:''}); save('crew',crew); renderCrew(); whoWheel.draw(); };
+$('photoIn').onchange = function(e){
+  var f = e.target.files[0]; if(!f || photoTarget===null) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    var im = new Image();
+    im.onload = function(){
+      var s = 240, c = document.createElement('canvas'); c.width = c.height = s;
+      var m = Math.min(im.width, im.height), sx = (im.width-m)/2, sy = (im.height-m)/2;
+      c.getContext('2d').drawImage(im,sx,sy,m,m,0,0,s,s);
+      crew[photoTarget].p = c.toDataURL('image/jpeg',0.8);
+      save('crew',crew); renderCrew();
+    };
+    im.src = rd.result;
+  };
+  rd.readAsDataURL(f); e.target.value='';
+};
+
+/* tipsy land */
+var TL = [];
+(function(){
+  function T(a,k,m,lab){ TL.push({a:a,k:k||'n',m:m||0,lab:lab||''}); }
+  T('start line, safe','e',0,'go');
+  T('');
+  T('');
+  T('');
+  T('');
+  T('safe','s',0,'safe');
+  T('');
+  T('');
+  T('go forward 3','m',3,'+3');
+  T('');
+  T('');
+  T('');
+  T('call ur mum or ur ex, or drink');
+  T('go back 4','m',-4,'-4');
+  T('');
+  T('');
+  T('');
+  T('stare contest with someone, loser drinks');
+  T('safe zone','s',0,'safe');
+  T('group selfie on ur story or drink');
+  T('');
+  T('');
+  T('');
+  T('');
+  T('go back 3','m',-3,'-3');
+  T('');
+  T('');
+  T('finish line','e',0,'end');
+})();
+var savedTL = load('tlsq2', null);
+if(savedTL && savedTL.length === 28){
+  savedTL.forEach(function(s,i){ TL[i].a = s.a; TL[i].k = s.k; TL[i].m = s.m; TL[i].lab = s.lab; });
+}
+var TLCOL = ['#ffffff','#9be7ff','#b6f0a4','#c9a7ff','#ff9a3c','#ffd84a','#ff6b6b','#7af0d2'];
+var tl = {pos:[],turn:0,busy:false,over:false};
+function tlPlayers(){ return crew.filter(function(p){ return p.n.trim(); }); }
+function tlCell(i){
+  if(i<=7) return [8,i+1];
+  if(i<=13) return [8-(i-7),8];
+  if(i<=21) return [1,8-(i-14)];
+  return [2+(i-22),1];
+}
+function tlBuild(){
+  var b = $('tlBoard');
+  TL.forEach(function(t,i){
+    var c = tlCell(i), d = document.createElement('div');
+    d.className = 'tile t-'+t.k; d.id = 'tile'+i;
+    d.style.gridRow = c[0]; d.style.gridColumn = c[1];
+    if(t.k==='n') d.style.background = (i%2) ? '#ff8fc2' : '#ffe98a';
+    d.innerHTML = '<span class="no">'+i+'</span><span class="lab">'+t.lab+'</span><div class="tk"></div>';
+    b.appendChild(d);
+  });
+}
+function tlTokens(){
+  var ps = tlPlayers();
+  TL.forEach(function(t,i){
+    var tk = $('tile'+i).querySelector('.tk'); tk.innerHTML = '';
+    ps.forEach(function(p,pi){
+      if(tl.pos[pi]===i){
+        var s = document.createElement('span'); s.className = 'tok';
+        s.style.background = TLCOL[pi % TLCOL.length];
+        s.textContent = p.n.slice(0,2);
+        tk.appendChild(s);
+      }
+    });
+  });
+}
+function tlTurnLabel(){ var ps = tlPlayers(); $('tlTurn').textContent = ps.length ? ps[tl.turn].n+"'s turn" : ''; }
+function tlReset(){
+  tl.pos = tlPlayers().map(function(){ return 0; });
+  tl.turn = 0; tl.busy = false; tl.over = false;
+  $('tlDie').textContent = '?'; $('tlMsg').textContent = '';
+  tlTurnLabel(); tlTokens();
+}
+function tlLand(p, ps){
+  var name = ps[p].n, t = TL[tl.pos[p]], msg = name+': '+(t.a||'safe');
+  if(tl.pos[p] < 27 && t.m){
+    tl.pos[p] = Math.max(0, Math.min(27, tl.pos[p]+t.m));
+    tlTokens();
+    var d = TL[tl.pos[p]];
+    if(tl.pos[p] < 27) msg += '. now on '+tl.pos[p]+': '+(d.m ? 'no double moves, safe' : (d.a||'safe'));
+  }
+  if(tl.pos[p] >= 27){
+    tl.over = true; tl.busy = false;
+    $('tlMsg').textContent = name+' wins, everyone else drinks';
+    $('tlTurn').textContent = 'game over';
+    return;
+  }
+  $('tlMsg').textContent = msg;
+  tl.turn = (tl.turn+1) % ps.length;
+  tlTurnLabel(); tl.busy = false;
+}
+function tlRoll(){
+  if(tl.busy || tl.over) return;
+  var ps = tlPlayers(); if(!ps.length) return;
+  tl.busy = true;
+  var p = tl.turn, r = 1+Math.floor(Math.random()*6), steps = r;
+  $('tlDie').textContent = r; $('tlMsg').textContent = '';
+  var timer = setInterval(function(){
+    if(steps > 0 && tl.pos[p] < 27){ tl.pos[p]++; steps--; tlTokens(); }
+    if(steps === 0 || tl.pos[p] >= 27){ clearInterval(timer); tlLand(p, ps); }
+  }, 250);
+}
+$('tlRoll').onclick = tlRoll;
+$('tlReset').onclick = tlReset;
+function tlSave(){ save('tlsq2', TL.map(function(t){ return {a:t.a,k:t.k,m:t.m,lab:t.lab}; })); }
+function tlStyle(i){
+  var t = TL[i], d = $('tile'+i);
+  d.className = 'tile t-'+t.k;
+  d.style.background = (t.k==='n') ? ((i%2) ? '#ff8fc2' : '#ffe98a') : '';
+  d.querySelector('.lab').textContent = t.lab;
+}
+function tlSetType(i, v){
+  var t = TL[i];
+  if(v==='n'){ t.k = 'n'; t.m = 0; t.lab = ''; }
+  else if(v==='s'){ t.k = 's'; t.m = 0; t.lab = 'safe'; }
+  else { t.k = 'm'; t.m = parseInt(v,10); t.lab = v; }
+  tlStyle(i); tlSave();
+}
+function tlRenderEdit(){
+  var el = $('tlEdit'); el.innerHTML = '';
+  TL.forEach(function(t,i){
+    var row = document.createElement('div'); row.className = 'item';
+    var k = document.createElement('span'); k.className = 'k'; k.textContent = i; row.appendChild(k);
+    var inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = 'blank = safe'; inp.value = t.a;
+    inp.oninput = function(){ TL[i].a = inp.value; tlSave(); };
+    row.appendChild(inp);
+    if(i > 0 && i < 27){
+      var sel = document.createElement('select');
+      ['n','s','+1','+2','+3','+4','-1','-2','-3','-4'].forEach(function(v){
+        var o = document.createElement('option'); o.value = v;
+        o.textContent = v==='n' ? 'normal' : (v==='s' ? 'safe' : (v.charAt(0)==='+' ? 'forward '+v.slice(1) : 'back '+v.slice(1)));
+        sel.appendChild(o);
+      });
+      sel.value = t.k==='s' ? 's' : (t.k==='m' ? (t.m>0 ? '+'+t.m : ''+t.m) : 'n');
+      sel.onchange = function(){ tlSetType(i, sel.value); };
+      row.appendChild(sel);
+    }
+    el.appendChild(row);
+  });
+}
+tlBuild(); tlReset(); tlRenderEdit();
+
+/* group dares */
+var groupDares = load('gdares2', [
+  "ASMR challenge! Everyone try to do your best ASMR impression and give us some tingles! Afterwards, everyone must vote for your favourite. If you get at least one vote, you are safe. If you get no votes, you drink. If you didn’t do any ASMR, you double-drink.",
+  "Hot potato challenge! Everyone must quickly pass around an object clockwise for 20 seconds. Whoever it last lands on is the loser and they must drink.",
+  "Photo challenge! Everyone must take one aesthetic photo of anything in the room - no retakes - and the worst photographer must drink. Anyone who retakes must double-drink.",
+  "Everyone go around the circle and give us a “hear-me-out” character. If none of us can agree with your attraction for this character, you drink.",
+  "Everyone go around and say your name as slowly as you can in one breath. The person who lasts the longest is safe. Everyone else must drink.",
+  "Men suck. If you have a man, drink. You need a drink after putting up with him. If you don’t have a man, congrats on your freedom!",
+  "Let’s play Chinese whispers! Whisper a sentence to the person on your left and go clockwise until the sentence comes back to you. If the sentence is not the same as it was at the beginning, everyone must drink.",
+  "Are you chronically online? Everyone in the group must show their screen time report. If you have over 8 hours of screen time on average, you must drink. If you have over 10 hours, you must double-drink. If you have over 12 hours, you must triple-drink.",
+  "The floor is lava! If you touch the floor from this point onwards, you must drink.",
+  "Can you keep up with the rhythm? The Taskmaster will clap a pattern that you have to repeat back to her. If you successfully repeat the pattern back 5 times, you are safe. Fail to clap it back correctly and you drink. If you fail the first clap back, you double-drink.",
+  "Hello travellers! Welcome to your Drunkards & Dragons campaign. The Taskmaster will pass around a D20 dice for you all to roll. If you get a 10 or above, you are safe. If you get below a 10, you drink. If you get a 1, you double-drink. If you get a 20, you can force someone else to drink."
+]);
+var groupWheel = makeWheel('groupCanvas','groupSpin',
+  function(){ return groupDares.map(function(d,i){return {label:String(i+1), i:i, t:d}}); },
+  function(item){
+    $('groupResult').innerHTML = '<div class="n">'+(item.i+1)+'</div><div class="d">'+esc(item.t)+'</div>';
+  });
+function renderGroup(){
+  var el = $('groupList'); el.innerHTML = '';
+  groupDares.forEach(function(d,i){
+    var row = document.createElement('div'); row.className = 'item';
+    row.innerHTML = '<span class="k">'+(i+1)+'</span><span class="t">'+esc(d)+'</span>';
+    row.appendChild(mkX('Remove dare', function(){ groupDares.splice(i,1); save('gdares2',groupDares); renderGroup(); groupWheel.draw(); }));
+    el.appendChild(row);
+  });
+}
+$('groupAdd').onclick = function(){
+  var t = $('groupNew').value.trim(); if(!t) return;
+  groupDares.push(t); $('groupNew').value=''; save('gdares2',groupDares); renderGroup(); groupWheel.draw();
+};
+renderGroup();
+
+/* drunk dice */
+var DICE = [
+  ['1 shot (or a big sip)',null,'Bottoms up: finish your drink','Faith gives out 2 drinks','Truth or drink','Citrus drinkers sip'],
+  ['Roll again','Spin a bottle: whoever it points at drinks','Flip a coin: heads give out 2, tails drink 2','Top up your drink','Stare contest with the person next to you. Loser drinks','Roll again'],
+  ['Sing or drink','Cheers: everyone clinks and sips','Twerk or drink',null,'Kiss, marry, kill: someone names three people and you choose',null],
+  [null,'Most sober person drinks','1 shot (or a big sip)','Whoever has the aux drinks','Drink up: a big gulp','Brown hair drinks'],
+  ['Give out a shot (or 3 sips)',null,'Wine drinkers drink','Blondes drink','Fizzy drink drinkers sip',null],
+  ['Chug water','Pick a drink buddy. They sip when you sip until the next roll','Roll again','Shots, shots, shots: everyone takes a big sip','Truth or drink',null]
+];
+var savedDice = load('dice', null);
+if(savedDice && savedDice.length === 6){ DICE = savedDice; }
+function renderDdList(){
+  var el = $('ddList'); el.innerHTML = '';
+  for(var a=0;a<6;a++){
+    for(var b=0;b<6;b++){
+      (function(a,b){
+        var row = document.createElement('div'); row.className = 'item';
+        var k = document.createElement('span'); k.className = 'ddk'; k.textContent = (a+1)+' and '+(b+1);
+        var inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = 'safe'; inp.value = DICE[a][b] || '';
+        inp.oninput = function(){ DICE[a][b] = inp.value.trim() || null; save('dice', DICE); };
+        row.appendChild(k); row.appendChild(inp); el.appendChild(row);
+      })(a,b);
+    }
+  }
+}
+renderDdList();
+var ddTimer = null;
+$('ddRoll').onclick = function(){
+  clearInterval(ddTimer);
+  var n = 0;
+  ddTimer = setInterval(function(){
+    $('dd1').textContent = 1+Math.floor(Math.random()*6);
+    $('dd2').textContent = 1+Math.floor(Math.random()*6);
+    n++;
+    if(n>8){
+      clearInterval(ddTimer);
+      var a = 1+Math.floor(Math.random()*6), b = 1+Math.floor(Math.random()*6);
+      $('dd1').textContent = a; $('dd2').textContent = b;
+      var act = DICE[a-1][b-1] || 'safe. u live to see another round';
+      $('ddResult').innerHTML = '<div class="n">'+a+' and '+b+'</div><div class="d">'+esc(act)+'</div>';
+      try{navigator.vibrate&&navigator.vibrate(100)}catch(e){}
+    }
+  },70);
+};
+
+/* dice / coin */
+$('rollBtn').onclick = function(){
+  var n = 1+Math.floor(Math.random()*6);
+  $('diceOut').textContent = n;
+  $('diceNote').textContent = (n%2===0 ? $('evenRule').value : $('oddRule').value);
+};
+$('coinBtn').onclick = function(){
+  $('diceOut').textContent = Math.random()<0.5 ? 'Heads' : 'Tails';
+  $('diceNote').textContent = '';
+};
+
+/* timer */
+var tmr = null;
+function startTimer(s){
+  clearInterval(tmr);
+  function show(){ $('timerOut').textContent = Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
+  show();
+  tmr = setInterval(function(){
+    s--; show();
+    if(s<=0){ clearInterval(tmr); $('timerOut').textContent = "Time's up"; try{navigator.vibrate&&navigator.vibrate([300,100,300])}catch(e){} }
+  },1000);
+}
+$('t20').onclick = function(){ startTimer(20); };
+$('t60').onclick = function(){ startTimer(60); };
+
+renderDares(); renderGames(); renderJokes(); renderCrew();
+whoWheel.draw(); dareWheel.draw(); groupWheel.draw();
+window.addEventListener('resize', function(){ dareWheel.draw(); whoWheel.draw(); });
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ dareWheel.draw(); whoWheel.draw(); }); }
+})();
+</script>
+</body>
+</html>
